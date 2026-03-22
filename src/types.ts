@@ -15,6 +15,7 @@ export interface Certification {
   name: string;
   issuer: string;
   year: number;
+  category: 'Data & AI' | 'Cloud & DevOps' | 'Management & HR' | 'Security & IoT';
 }
 
 export interface Project {
@@ -23,6 +24,7 @@ export interface Project {
   tags: string[];
   link?: string;
   image?: string;
+  label?: string;
 }
 
 export interface Service {

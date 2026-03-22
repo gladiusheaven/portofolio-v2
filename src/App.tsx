@@ -21,6 +21,7 @@ import {
   Award,
   MessageSquare,
   X,
+  Menu,
   Send,
   Bot,
   User,
@@ -28,7 +29,10 @@ import {
   Cloud,
   Sun,
   Moon,
-  Layout
+  Layout,
+  Share2,
+  Twitter,
+  Facebook
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -43,8 +47,132 @@ import {
 } from 'recharts';
 import { EXPERIENCES, SKILLS, CERTIFICATIONS, SKILL_PROFICIENCY, SERVICES, PROJECTS } from './constants';
 
+const Typewriter = ({ text, delay = 100, startDelay = 0 }: { text: string, delay?: number, startDelay?: number }) => {
+  const [currentText, setCurrentText] = React.useState('');
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isStarted, setIsStarted] = React.useState(false);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsStarted(true), startDelay);
+    return () => clearTimeout(timer);
+  }, [startDelay]);
+
+  React.useEffect(() => {
+    if (isStarted && currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setCurrentText(prevText => prevText + text[currentIndex]);
+        setCurrentIndex(prevIndex => prevIndex + 1);
+      }, delay);
+  
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, delay, text, isStarted]);
+
+  return (
+    <span>
+      {currentText}
+      {isStarted && currentIndex < text.length && (
+        <motion.span
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ repeat: Infinity, duration: 0.8 }}
+          className="inline-block w-[2px] h-[0.8em] bg-blue-500 ml-1 align-middle"
+        />
+      )}
+    </span>
+  );
+};
+
+const SocialShare = ({ theme }: { theme: 'dark' | 'light' }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const title = "Putranto Pratama - Senior Solutions Architect & AI Portfolio";
+
+  const shareLinks = [
+    {
+      name: 'LinkedIn',
+      icon: <Linkedin size={18} />,
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
+      color: 'bg-[#0077b5]'
+    },
+    {
+      name: 'Twitter',
+      icon: <Twitter size={18} />,
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`,
+      color: 'bg-[#1da1f2]'
+    },
+    {
+      name: 'Facebook',
+      icon: <Facebook size={18} />,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+      color: 'bg-[#1877f2]'
+    },
+    {
+      name: 'WhatsApp',
+      icon: <MessageSquare size={18} />,
+      url: `https://wa.me/?text=${encodeURIComponent(title + ' ' + shareUrl)}`,
+      color: 'bg-[#25d366]'
+    }
+  ];
+
+  return (
+    <div className="fixed left-6 bottom-6 z-[60] flex flex-col items-start gap-4">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="flex flex-col gap-3"
+          >
+            {shareLinks.map((link) => (
+              <motion.a
+                key={link.name}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.1, x: 5 }}
+                whileTap={{ scale: 0.9 }}
+                className={`w-12 h-12 rounded-full flex items-center justify-center text-white shadow-lg ${link.color}`}
+                title={`Share on ${link.name}`}
+              >
+                {link.icon}
+              </motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-12 h-12 rounded-full flex items-center justify-center shadow-xl transition-colors ${
+          theme === 'dark' ? 'bg-white text-black' : 'bg-black text-white'
+        }`}
+      >
+        {isOpen ? <X size={20} /> : <Share2 size={20} />}
+      </motion.button>
+    </div>
+  );
+};
+
+const SliderIndicator = ({ count, activeIndex, theme }: { count: number, activeIndex: number, theme: 'dark' | 'light' }) => (
+  <div className="flex md:hidden justify-center gap-2 mt-6">
+    {Array.from({ length: count }).map((_, i) => (
+      <div
+        key={i}
+        className={`h-1 rounded-full transition-all duration-300 ${
+          i === activeIndex 
+            ? 'w-6 bg-blue-500' 
+            : `w-2 ${theme === 'dark' ? 'bg-white/10' : 'bg-black/10'}`
+        }`}
+      />
+    ))}
+  </div>
+);
+
 const Navbar = ({ theme, toggleTheme }: { theme: 'dark' | 'light', toggleTheme: () => void }) => {
   const [activeMenu, setActiveMenu] = React.useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const menuItems = [
     {
@@ -89,14 +217,20 @@ const Navbar = ({ theme, toggleTheme }: { theme: 'dark' | 'light', toggleTheme: 
     }`}>
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-500 rounded flex items-center justify-center">
-            <span className="text-black font-bold text-lg">P</span>
+          <div className="w-8 h-8 rounded flex items-center justify-center overflow-hidden">
+            <img 
+              src="https://www.dropbox.com/scl/fi/zsvjc8ib6yn2iilge1pwo/e398c580-69d8-41fe-b247-20aad00678db_removalai_preview.png?rlkey=02ekhe20ouyolsw0o99k7l00n&st=lfwg9j87&raw=1" 
+              alt="Logo" 
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
           </div>
           <span className={`font-mono text-sm tracking-tighter uppercase font-bold transition-colors ${
             theme === 'dark' ? 'text-white' : 'text-black'
-          }`}>Putranto.Pratama</span>
+          }`}>Ptratama.AI</span>
         </div>
 
+        {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
           {menuItems.map((item) => (
             <div 
@@ -176,7 +310,90 @@ const Navbar = ({ theme, toggleTheme }: { theme: 'dark' | 'light', toggleTheme: 
             Contact
           </a>
         </div>
+
+        {/* Mobile Hamburger */}
+        <div className="flex md:hidden items-center gap-4">
+          <button 
+            onClick={toggleTheme}
+            className={`p-2 rounded-full transition-colors ${
+              theme === 'dark' ? 'bg-white/5 text-white/60 hover:text-white' : 'bg-black/5 text-black/60 hover:text-black'
+            }`}
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={`p-2 rounded-full transition-colors ${
+              theme === 'dark' ? 'text-white/60 hover:text-white' : 'text-black/60 hover:text-black'
+            }`}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu Slide-out */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className={`fixed inset-0 top-16 z-40 md:hidden flex flex-col p-6 overflow-y-auto ${
+              theme === 'dark' ? 'bg-black' : 'bg-[#fdfbf7]'
+            }`}
+          >
+            <div className="flex flex-col gap-8">
+              {menuItems.map((item) => (
+                <div key={item.id} className="flex flex-col gap-4">
+                  <a 
+                    href={item.href || `#${item.id}`}
+                    onClick={() => !item.subItems && setIsMobileMenuOpen(false)}
+                    className={`text-sm font-bold uppercase tracking-widest ${
+                      theme === 'dark' ? 'text-white' : 'text-black'
+                    }`}
+                  >
+                    {item.label}
+                  </a>
+                  {item.subItems && (
+                    <div className="grid grid-cols-1 gap-4 pl-4 border-l border-blue-500/20">
+                      {item.subItems.map((sub) => (
+                        <a 
+                          key={sub.id} 
+                          href={`#${sub.id}`}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center gap-4 group"
+                        >
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+                            theme === 'dark' ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-500/10 text-blue-600'
+                          }`}>
+                            {getIcon(sub.icon)}
+                          </div>
+                          <div>
+                            <h4 className={`text-[10px] font-bold uppercase tracking-widest ${
+                              theme === 'dark' ? 'text-white/80' : 'text-black/80'
+                            }`}>{sub.title}</h4>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              <a 
+                href="https://wa.me/6281513357006"
+                target="_blank"
+                className={`w-full py-4 text-center text-xs font-bold uppercase tracking-widest transition-all rounded-xl ${
+                  theme === 'dark' ? 'bg-white text-black hover:bg-blue-500' : 'bg-black text-white hover:bg-blue-600'
+                }`}
+              >
+                Get in Touch
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
@@ -234,15 +451,15 @@ const Hero = ({ theme }: { theme: 'dark' | 'light' }) => {
                 theme === 'dark' ? 'bg-blue-500' : 'bg-blue-600'
               }`}></span>
             </span>
-            Available for Strategic Architecture
+            Ready, when you are
           </div>
 
           <h1 className={`text-6xl md:text-7xl font-bold tracking-tighter leading-[0.9] mb-8 ${
             theme === 'dark' ? 'text-white' : 'text-black'
           }`}>
-            SENIOR SOLUTIONS <br />
+            <Typewriter text="SENIOR SOLUTIONS" delay={80} /> <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600">
-              ARCHITECT & AI
+              <Typewriter text="ARCHITECT & AI" delay={80} startDelay={1500} />
             </span>
           </h1>
 
@@ -291,20 +508,20 @@ const Hero = ({ theme }: { theme: 'dark' | 'light' }) => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className={`relative aspect-video lg:aspect-square rounded-3xl overflow-hidden border shadow-2xl ${
+          className={`relative aspect-video lg:aspect-square rounded-3xl overflow-hidden ${
             theme === 'dark' ? 'border-white/10' : 'border-black/10'
           }`}
         >
           <img 
-            src="https://picsum.photos/seed/architecture/1200/1200" 
+            src="https://www.dropbox.com/scl/fi/s65z1fq0yyz3dorl5zsds/2617e844-8e0a-41d6-b39a-be27d2d7e39a_removalai_preview.png?rlkey=o1wpm8zwu0w2ly20gv3xwwl3q&st=0ngmlz39&raw=1" 
             alt="Banner" 
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
           <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent`} />
           <div className="absolute bottom-8 left-8">
-            <div className="text-[10px] uppercase tracking-[0.3em] text-blue-400 font-bold mb-3">System Architecture</div>
-            <div className="text-2xl font-bold text-white tracking-tight">Designing the Future <br /> of Intelligent Enterprises</div>
+            <div className="text-[10px] uppercase tracking-[0.3em] text-blue-400 font-bold mb-3">Putranto Pratama</div>
+            <div className="text-2xl font-bold text-white tracking-tight">Empowering Growth with <br /> Technologies</div>
           </div>
         </motion.div>
       </div>
@@ -323,6 +540,7 @@ interface ExperienceCardProps {
   exp: typeof EXPERIENCES[0];
   index: number;
   theme: 'dark' | 'light';
+  isActive?: boolean;
   key?: React.Key;
 }
 
@@ -332,7 +550,7 @@ const SectionDivider = ({ theme }: { theme: 'dark' | 'light' }) => (
   }`} />
 );
 
-const ExperienceCard = ({ exp, index, theme }: ExperienceCardProps) => (
+const ExperienceCard = ({ exp, index, theme, isActive }: ExperienceCardProps) => (
   <motion.div 
     initial={{ opacity: 0, x: -20 }}
     whileInView={{ opacity: 1, x: 0 }}
@@ -340,8 +558,8 @@ const ExperienceCard = ({ exp, index, theme }: ExperienceCardProps) => (
     transition={{ delay: index * 0.1 }}
     className={`group relative grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-8 py-12 border-b px-6 rounded-xl transition-all ${
       theme === 'dark' 
-        ? 'border-white/5 hover:bg-white/5' 
-        : 'border-black/5 hover:bg-black/5'
+        ? `border-white/5 ${isActive ? 'bg-white/5' : 'hover:bg-white/5'}` 
+        : `border-black/5 ${isActive ? 'bg-black/5' : 'hover:bg-black/5'}`
     }`}
   >
     <div className="space-y-2">
@@ -419,62 +637,99 @@ const ServicesSection = ({ theme }: { theme: 'dark' | 'light' }) => {
   );
 };
 
-const PortfolioGallery = ({ theme }: { theme: 'dark' | 'light' }) => (
-  <section id="portfolio" className="py-32">
-    <div className="max-w-7xl mx-auto px-6">
-      <div className="mb-20">
-        <h2 className="text-xs uppercase tracking-[0.4em] text-blue-500 font-bold mb-4">Portfolio</h2>
-        <h3 className={`text-4xl font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Featured Projects</h3>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {PROJECTS.map((project, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className={`group rounded-3xl overflow-hidden border transition-all ${
-              theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10 shadow-sm'
-            }`}
-          >
-            <div className="aspect-video overflow-hidden relative">
-              <img 
-                src={project.image} 
-                alt={project.title} 
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
-                <a 
-                  href={project.link} 
-                  target="_blank" 
-                  className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white hover:text-blue-400 transition-colors"
-                >
-                  View on GitHub <ExternalLink size={14} />
-                </a>
+const PortfolioGallery = ({ theme }: { theme: 'dark' | 'light' }) => {
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const width = scrollRef.current.offsetWidth;
+      const index = Math.round(scrollLeft / width);
+      setActiveIndex(index);
+    }
+  };
+
+  return (
+    <section id="portfolio" className="py-32">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="mb-20">
+          <h2 className="text-xs uppercase tracking-[0.4em] text-blue-500 font-bold mb-4">Portfolio</h2>
+          <h3 className={`text-4xl font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Featured Projects</h3>
+        </div>
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory gap-8 pb-8 -mx-6 px-6 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0"
+        >
+          {PROJECTS.map((project, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className={`group rounded-3xl overflow-hidden border transition-all flex-shrink-0 w-[85vw] md:w-auto snap-center ${
+                theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10 shadow-sm'
+              }`}
+            >
+              <div className="aspect-video overflow-hidden relative">
+                <img 
+                  src={project.image} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
+                {project.label && (
+                  <div className="absolute top-4 left-4 z-20">
+                    <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-widest bg-blue-600 text-white rounded-full shadow-lg">
+                      {project.label}
+                    </span>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                  <a 
+                    href={project.link} 
+                    target="_blank" 
+                    className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white hover:text-blue-400 transition-colors"
+                  >
+                    View on GitHub <ExternalLink size={14} />
+                  </a>
+                </div>
               </div>
-            </div>
-            <div className="p-6">
-              <h4 className={`text-lg font-bold uppercase tracking-widest mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{project.title}</h4>
-              <p className={`text-xs leading-relaxed mb-4 ${theme === 'dark' ? 'text-white/40' : 'text-black/40'}`}>{project.description}</p>
-              <div className="flex flex-wrap gap-2">
-                {project.tags.map((tag, j) => (
-                  <span key={j} className={`px-2 py-1 text-[9px] font-mono uppercase tracking-wider rounded ${
-                    theme === 'dark' ? 'bg-white/5 text-white/40' : 'bg-black/5 text-black/40'
-                  }`}>{tag}</span>
-                ))}
+              <div className="p-6">
+                <h4 className={`text-lg font-bold uppercase tracking-widest mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{project.title}</h4>
+                <p className={`text-xs leading-relaxed mb-4 ${theme === 'dark' ? 'text-white/40' : 'text-black/40'}`}>{project.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map((tag, j) => (
+                    <span key={j} className={`px-2 py-1 text-[9px] font-mono uppercase tracking-wider rounded ${
+                      theme === 'dark' ? 'bg-white/5 text-white/40' : 'bg-black/5 text-black/40'
+                    }`}>{tag}</span>
+                  ))}
+                </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          ))}
+        </div>
+        <SliderIndicator count={PROJECTS.length} activeIndex={activeIndex} theme={theme} />
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const SkillSection = ({ theme }: { theme: 'dark' | 'light' }) => {
   const [isInView, setIsInView] = React.useState(false);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const width = scrollRef.current.offsetWidth;
+      const index = Math.round(scrollLeft / width);
+      setActiveIndex(index);
+    }
+  };
 
   const Counter = ({ target, duration = 1.5 }: { target: number, duration?: number }) => {
     const [count, setCount] = React.useState(0);
@@ -505,18 +760,22 @@ const SkillSection = ({ theme }: { theme: 'dark' | 'light' }) => {
           <h3 className={`text-4xl font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Technical Arsenal</h3>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-stretch">
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-8 -mx-6 px-6 scrollbar-hide lg:grid lg:grid-cols-4 lg:overflow-visible lg:snap-none lg:pb-0 lg:mx-0 lg:px-0 items-stretch"
+        >
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4"
+            className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 flex-shrink-0 w-[85vw] lg:w-auto snap-center h-full"
           >
             {SKILLS.map((skill, i) => (
               <motion.div 
                 key={i} 
                 whileHover={{ scale: 1.02 }}
-                className={`p-4 rounded-xl border transition-all cursor-default group ${
+                className={`p-4 rounded-xl border transition-all cursor-default group h-full ${
                   theme === 'dark' ? 'bg-white/5 border-white/10 hover:bg-white/10' : 'bg-black/5 border-black/10 hover:bg-black/10 shadow-sm'
                 }`}
               >
@@ -549,7 +808,7 @@ const SkillSection = ({ theme }: { theme: 'dark' | 'light' }) => {
             whileInView={{ opacity: 1, scale: 1 }}
             onViewportEnter={() => setIsInView(true)}
             viewport={{ once: true }}
-            className={`lg:col-span-2 h-full min-h-[400px] border rounded-2xl p-6 flex flex-col ${
+            className={`lg:col-span-2 h-full min-h-[400px] border rounded-2xl p-6 flex flex-col flex-shrink-0 w-[85vw] lg:w-auto snap-center ${
               theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10 shadow-sm'
             }`}
           >
@@ -588,6 +847,7 @@ const SkillSection = ({ theme }: { theme: 'dark' | 'light' }) => {
             </div>
           </motion.div>
         </div>
+        <SliderIndicator count={2} activeIndex={activeIndex} theme={theme} />
       </div>
     </section>
   );
@@ -640,7 +900,7 @@ const AIFocus = ({ theme }: { theme: 'dark' | 'light' }) => (
               <BrainCircuit size={80} className="text-blue-500 animate-pulse" />
               <div className="text-center">
                 <div className="text-xs font-mono text-blue-500 mb-2">ASTRID-GPT ENGINE</div>
-                <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>89% ACCURACY</div>
+                <div className={`text-3xl font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>90%++ Accuracy</div>
                 <div className={`text-[10px] uppercase tracking-widest mt-2 ${theme === 'dark' ? 'text-white/40' : 'text-black/40'}`}>Internal Testing Benchmark</div>
               </div>
             </div>
@@ -655,7 +915,18 @@ const AIFocus = ({ theme }: { theme: 'dark' | 'light' }) => (
 
 const Certifications = ({ theme }: { theme: 'dark' | 'light' }) => {
   const [showAll, setShowAll] = React.useState(false);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
   const visibleCerts = showAll ? CERTIFICATIONS : CERTIFICATIONS.slice(0, 6);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const width = scrollRef.current.offsetWidth;
+      const index = Math.round(scrollLeft / width);
+      setActiveIndex(index);
+    }
+  };
 
   return (
     <section id="certifications" className="py-32">
@@ -673,7 +944,11 @@ const Certifications = ({ theme }: { theme: 'dark' | 'light' }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-8 -mx-6 px-6 scrollbar-hide md:grid md:grid-cols-2 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0"
+        >
           <AnimatePresence mode="popLayout">
             {visibleCerts.map((cert, i) => (
               <motion.div 
@@ -683,7 +958,7 @@ const Certifications = ({ theme }: { theme: 'dark' | 'light' }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className={`flex items-center gap-6 p-6 border transition-all group ${
+                className={`flex items-center gap-6 p-6 border transition-all group flex-shrink-0 w-[85vw] md:w-auto snap-center ${
                   theme === 'dark' ? 'bg-zinc-900/50 border-white/5 hover:border-blue-500/30' : 'bg-white border-black/5 hover:border-blue-500/20 shadow-sm'
                 }`}
               >
@@ -693,6 +968,9 @@ const Certifications = ({ theme }: { theme: 'dark' | 'light' }) => {
                   <Award size={24} />
                 </div>
                 <div>
+                  <div className={`text-[9px] font-mono uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+                    {cert.category}
+                  </div>
                   <h4 className={`text-sm font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{cert.name}</h4>
                   <div className={`flex items-center gap-3 text-[10px] uppercase tracking-widest ${theme === 'dark' ? 'text-white/40' : 'text-black/40'}`}>
                     <span>{cert.issuer}</span>
@@ -704,6 +982,7 @@ const Certifications = ({ theme }: { theme: 'dark' | 'light' }) => {
             ))}
           </AnimatePresence>
         </div>
+        <SliderIndicator count={Math.ceil(visibleCerts.length / (window.innerWidth >= 768 ? 2 : 1))} activeIndex={activeIndex} theme={theme} />
 
         {CERTIFICATIONS.length > 6 && (
           <div className="mt-12 flex justify-center">
@@ -729,10 +1008,15 @@ const Footer = ({ theme }: { theme: 'dark' | 'light' }) => (
       <div className="flex flex-col md:flex-row justify-between items-center gap-12">
         <div className="space-y-4 text-center md:text-left">
           <div className="flex items-center justify-center md:justify-start gap-2">
-            <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center">
-              <span className="text-black font-bold text-sm">P</span>
+            <div className="w-6 h-6 bg-blue-500 rounded flex items-center justify-center overflow-hidden">
+              <img 
+                src="https://www.dropbox.com/scl/fi/zsvjc8ib6yn2iilge1pwo/e398c580-69d8-41fe-b247-20aad00678db_removalai_preview.png?rlkey=02ekhe20ouyolsw0o99k7l00n&st=lfwg9j87&raw=1" 
+                alt="Logo" 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
             </div>
-            <span className={`font-mono text-xs tracking-tighter uppercase font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Putranto.Pratama</span>
+            <span className={`font-mono text-xs tracking-tighter uppercase font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Ptratama.AI</span>
           </div>
           <p className={`text-[10px] uppercase tracking-widest ${theme === 'dark' ? 'text-white/40' : 'text-black/40'}`}>
             © 2026 Putranto Pratama. All rights reserved.
@@ -924,6 +1208,37 @@ const Chatbot = ({ theme }: { theme: 'dark' | 'light' }) => {
   );
 };
 
+const ExperienceSlider = ({ theme }: { theme: 'dark' | 'light' }) => {
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const scrollLeft = scrollRef.current.scrollLeft;
+      const width = scrollRef.current.offsetWidth;
+      const index = Math.round(scrollLeft / width);
+      setActiveIndex(index);
+    }
+  };
+
+  return (
+    <>
+      <div 
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-6 px-6 scrollbar-hide md:block md:space-y-2 md:overflow-visible md:snap-none md:pb-0 md:mx-0 md:px-0"
+      >
+        {EXPERIENCES.slice(0, 3).map((exp, i) => (
+          <div key={i} className="flex-shrink-0 w-[85vw] md:w-auto snap-center">
+            <ExperienceCard exp={exp} index={i} theme={theme} isActive={i === activeIndex} />
+          </div>
+        ))}
+      </div>
+      <SliderIndicator count={3} activeIndex={activeIndex} theme={theme} />
+    </>
+  );
+};
+
 export default function App() {
   const [theme, setTheme] = React.useState<'dark' | 'light'>('dark');
 
@@ -936,6 +1251,7 @@ export default function App() {
       theme === 'dark' ? 'bg-[#020617] text-white' : 'bg-[#fdfbf7] text-black'
     }`}>
       <Navbar theme={theme} toggleTheme={toggleTheme} />
+      <SocialShare theme={theme} />
       
       <Hero theme={theme} />
       
@@ -972,11 +1288,7 @@ export default function App() {
                 </a>
               </div>
             </div>
-            <div className="space-y-2">
-              {EXPERIENCES.slice(0, 3).map((exp, i) => (
-                <ExperienceCard key={i} exp={exp} index={i} theme={theme} />
-              ))}
-            </div>
+            <ExperienceSlider theme={theme} />
           </div>
         </section>
 

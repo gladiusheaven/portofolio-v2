@@ -10,7 +10,7 @@ export const EXPERIENCES: Experience[] = [
       "Reduced medical check-up (MCU) administrative turnaround by 99% (3 working days to < 5 minutes).",
       "Led implementation of SAP SuccessFactors across 6 modules (Onboarding, Recruitment, Learning, etc.).",
       "Established verified WhatsApp Business account for HR communication with >80% utilization.",
-      "Developed ASTRID-GPT, a GPT-3.5-based chatbot with 89% response accuracy in internal testing."
+      "Developed ASTRID-GPT, a GPT-3.5-based chatbot with 90%++ response accuracy in internal testing."
     ]
   },
   {
@@ -66,16 +66,21 @@ export const SKILL_PROFICIENCY = [
 ];
 
 export const CERTIFICATIONS: Certification[] = [
-  { name: "Human Resources Foundations", issuer: "CIPD & LinkedIn", year: 2025 },
-  { name: "Microsoft Security Essentials Professional Certificate", issuer: "Microsoft & LinkedIn", year: 2025 },
-  { name: "Career Essentials in Generative AI", issuer: "Microsoft & LinkedIn", year: 2025 },
-  { name: "Learning Google Cloud Foundations", issuer: "Dicoding", year: 2024 },
-  { name: "Learning DevOps Foundations", issuer: "Dicoding", year: 2024 },
-  { name: "AWS Academy Graduates - Cloud Foundations", issuer: "Amazon Web Services", year: 2023 },
-  { name: "Learning SOLID Principles in Programming", issuer: "Dicoding", year: 2023 },
-  { name: "Professional Certificate in CHRP", issuer: "UNIKA Atma Jaya", year: 2022 },
-  { name: "CISCO DevNet Associate", issuer: "CISCO", year: 2022 },
-  { name: "Introduction to IoT", issuer: "CISCO", year: 2022 }
+  // --- LEADERSHIP & MANAGEMENT ---
+  { name: "Professional Certificate in CHRP", issuer: "UNIKA Atma Jaya", year: 2022, category: 'Management & HR' },
+  { name: "Human Resources Foundations", issuer: "CIPD & LinkedIn", year: 2025, category: 'Management & HR' },
+
+  // --- DATA, AI & CLOUD ---
+  { name: "Supervisor Data Scientist", issuer: "Komdigi Indonesia", year: 2026, category: 'Data & AI' },
+  { name: "Career Essentials in Generative AI", issuer: "Microsoft & LinkedIn", year: 2025, category: 'Data & AI' },
+  { name: "AWS Academy Graduates - Cloud Foundations", issuer: "Amazon Web Services", year: 2023, category: 'Cloud & DevOps' },
+  { name: "Learning Google Cloud Foundations", issuer: "Dicoding", year: 2024, category: 'Cloud & DevOps' },
+
+  // --- INFRASTRUCTURE & SECURITY ---
+  { name: "CISCO DevNet Associate", issuer: "CISCO", year: 2022, category: 'Security & IoT' },
+  { name: "Microsoft Security Essentials Professional Certificate", issuer: "Microsoft & LinkedIn", year: 2025, category: 'Security & IoT' },
+  { name: "Learning DevOps Foundations", issuer: "Dicoding", year: 2024, category: 'Cloud & DevOps' },
+  { name: "Learning SOLID Principles in Programming", issuer: "Dicoding", year: 2023, category: 'Data & AI' }
 ];
 
 export const SERVICES = [
@@ -100,37 +105,40 @@ export const SERVICES = [
     icon: "BrainCircuit"
   },
   {
-    title: "Full-stack Development",
-    description: "Building production-grade web applications with React, Node.js, and Python.",
+    title: "Full-stack Application Development",
+    description: "Building production-grade web applications with React, Node.js, Laravel, Vue.js and Python.",
     icon: "Code2"
   },
   {
     title: "Cloud & DevOps",
-    description: "Azure/AWS cloud infrastructure, CI/CD, and server management.",
+    description: "Azure/Google Cloud Platform cloud infrastructure, CI/CD, and server management.",
     icon: "Cloud"
   }
 ];
 
 export const PROJECTS = [
   {
-    title: "ASTRID-GPT",
-    description: "AI-powered employee self-service chatbot with 89% accuracy.",
-    tags: ["AI", "RAG", "Python"],
+    title: "AstridAI",
+    description: "AI-powered employee self-service chatbot with 90%++ accuracy.",
+    tags: ["AI", "RAG", "Python", "LangChain"],
     link: "https://github.com/gladiusheaven/astrid-gpt",
-    image: "https://drive.google.com/file/d/1Dr0pty6jbYSQ6kDC25LXW39GL-MiqPns/view?usp=sharing"
+    image: "https://lh3.googleusercontent.com/d/1Dr0pty6jbYSQ6kDC25LXW39GL-MiqPns",
+    label: "AI Agent & Power Platform"
   },
   {
-    title: "Medical Check-up Automation",
-    description: "Reduced MCU administrative turnaround by 99% (3 days to < 5 minutes).",
-    tags: ["Automation", "Power Platform"],
+    title: "MCU Reg. Process MCP Automation",
+    description: "Reduced MCU administrative turnaround by 99% (3 days to < 5 minutes) by using Workflow automation and applied MCP.",
+    tags: ["Automation", "Power Platform", "RAG", "UIPath"],
     link: "https://github.com/gladiusheaven/mcu-automation",
-    image: "https://picsum.photos/seed/mcu/800/600"
+    image: "https://www.dropbox.com/scl/fi/7orruc21vb9otf87je1it/Screenshot-2026-03-22-at-23.17.21.png?rlkey=brtugbqbmvqqfwxxlhetty6v0&st=rt26lq3p&raw=1",
+    label: "MCP Agentic"
   },
   {
     title: "Enterprise CRM (eBesha)",
-    description: "Custom CRM product for contact center management.",
-    tags: ["Full-stack", "Laravel", "Node.js"],
+    description: "Custom CRM product for contact center management with PSTN trunking and mail server integration. Proactively contributed in Bank BPD Riau Implementation (2019).",
+    tags: ["Full-stack", "Laravel", "Typescript", "Python"],
     link: "https://github.com/gladiusheaven/ebesha-crm",
-    image: "https://picsum.photos/seed/crm/800/600"
+    image: "https://www.dropbox.com/scl/fi/0wj7yrjngehyuo8r006ux/Ebesha.png?rlkey=k6gz22xzeloh42dqwx1o6afdh&st=2b6o4jvc&raw=1",
+    label: "Full-stack AppDev"
   }
 ];
