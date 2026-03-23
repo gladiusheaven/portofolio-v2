@@ -16,6 +16,10 @@ export interface Certification {
   issuer: string;
   year: number;
   category: 'Data & AI' | 'Cloud & DevOps' | 'Management & HR' | 'Security & IoT';
+  description?: string;
+  skills?: string[];
+  credentialId?: string;
+  link?: string;
 }
 
 export interface Project {

@@ -46,6 +46,7 @@ import {
   LabelList
 } from 'recharts';
 import { EXPERIENCES, SKILLS, CERTIFICATIONS, SKILL_PROFICIENCY, SERVICES, PROJECTS } from './constants';
+import { Certification } from './types';
 
 const Typewriter = ({ text, delay = 100, startDelay = 0 }: { text: string, delay?: number, startDelay?: number }) => {
   const [currentText, setCurrentText] = React.useState('');
@@ -913,9 +914,118 @@ const AIFocus = ({ theme }: { theme: 'dark' | 'light' }) => (
   </section>
 );
 
+const CertificationModal = ({ cert, isOpen, onClose, theme }: { cert: Certification | null, isOpen: boolean, onClose: () => void, theme: 'dark' | 'light' }) => {
+  if (!cert) return null;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className={`relative w-full max-w-2xl rounded-3xl overflow-hidden border shadow-2xl ${
+              theme === 'dark' ? 'bg-zinc-900 border-white/10' : 'bg-white border-black/10'
+            }`}
+          >
+            <div className="p-8 md:p-12">
+              <button 
+                onClick={onClose}
+                className={`absolute top-6 right-6 p-2 rounded-full transition-colors ${
+                  theme === 'dark' ? 'hover:bg-white/10 text-white/40 hover:text-white' : 'hover:bg-black/10 text-black/40 hover:text-black'
+                }`}
+              >
+                <X size={20} />
+              </button>
+
+              <div className="flex items-start gap-6 mb-8">
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
+                  theme === 'dark' ? 'bg-blue-500/10 text-blue-500' : 'bg-blue-500/10 text-blue-600'
+                }`}>
+                  <Award size={32} />
+                </div>
+                <div>
+                  <div className={`text-[10px] font-mono uppercase tracking-[0.3em] mb-2 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+                    {cert.category}
+                  </div>
+                  <h3 className={`text-2xl md:text-3xl font-bold tracking-tight mb-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                    {cert.name}
+                  </h3>
+                  <div className={`flex items-center gap-3 text-xs uppercase tracking-widest ${theme === 'dark' ? 'text-white/40' : 'text-black/40'}`}>
+                    <span>{cert.issuer}</span>
+                    <div className={`w-1 h-1 rounded-full ${theme === 'dark' ? 'bg-white/20' : 'bg-black/20'}`} />
+                    <span>{cert.year}</span>
+                  </div>
+                </div>
+              </div>
+
+              {cert.description && (
+                <div className="mb-8">
+                  <h4 className={`text-[10px] uppercase tracking-widest font-bold mb-3 ${theme === 'dark' ? 'text-white/60' : 'text-black/60'}`}>Description</h4>
+                  <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-white/70' : 'text-black/70'}`}>
+                    {cert.description}
+                  </p>
+                </div>
+              )}
+
+              {cert.skills && cert.skills.length > 0 && (
+                <div className="mb-8">
+                  <h4 className={`text-[10px] uppercase tracking-widest font-bold mb-4 ${theme === 'dark' ? 'text-white/60' : 'text-black/60'}`}>Skills Validated</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {cert.skills.map((skill, i) => (
+                      <span 
+                        key={i}
+                        className={`px-3 py-1.5 text-[10px] font-mono uppercase tracking-wider rounded-lg border ${
+                          theme === 'dark' ? 'bg-white/5 border-white/10 text-white/60' : 'bg-black/5 border-black/10 text-black/60'
+                        }`}
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col md:flex-row gap-4 pt-8 border-t border-white/5">
+                {cert.credentialId && (
+                  <div className="flex-1">
+                    <div className={`text-[9px] uppercase tracking-widest mb-1 ${theme === 'dark' ? 'text-white/30' : 'text-black/30'}`}>Credential ID</div>
+                    <div className={`text-xs font-mono ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{cert.credentialId}</div>
+                  </div>
+                )}
+                <div className="flex gap-4">
+                   {cert.link && (
+                    <a 
+                      href={cert.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-6 py-3 text-[10px] font-bold uppercase tracking-widest bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    >
+                      Verify Credential <ExternalLink size={14} />
+                    </a>
+                   )}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const Certifications = ({ theme }: { theme: 'dark' | 'light' }) => {
   const [showAll, setShowAll] = React.useState(false);
   const [activeIndex, setActiveIndex] = React.useState(0);
+  const [selectedCert, setSelectedCert] = React.useState<Certification | null>(null);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const visibleCerts = showAll ? CERTIFICATIONS : CERTIFICATIONS.slice(0, 6);
 
@@ -958,7 +1068,8 @@ const Certifications = ({ theme }: { theme: 'dark' | 'light' }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className={`flex items-center gap-6 p-6 border transition-all group flex-shrink-0 w-[85vw] md:w-auto snap-center ${
+                onClick={() => setSelectedCert(cert)}
+                className={`flex items-center gap-6 p-6 border transition-all group flex-shrink-0 w-[85vw] md:w-auto snap-center cursor-pointer ${
                   theme === 'dark' ? 'bg-zinc-900/50 border-white/5 hover:border-blue-500/30' : 'bg-white border-black/5 hover:border-blue-500/20 shadow-sm'
                 }`}
               >
@@ -998,6 +1109,13 @@ const Certifications = ({ theme }: { theme: 'dark' | 'light' }) => {
           </div>
         )}
       </div>
+
+      <CertificationModal 
+        cert={selectedCert} 
+        isOpen={!!selectedCert} 
+        onClose={() => setSelectedCert(null)} 
+        theme={theme} 
+      />
     </section>
   );
 };

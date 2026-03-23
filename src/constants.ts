@@ -67,20 +67,100 @@ export const SKILL_PROFICIENCY = [
 
 export const CERTIFICATIONS: Certification[] = [
   // --- LEADERSHIP & MANAGEMENT ---
-  { name: "Professional Certificate in CHRP", issuer: "UNIKA Atma Jaya", year: 2022, category: 'Management & HR' },
-  { name: "Human Resources Foundations", issuer: "CIPD & LinkedIn", year: 2025, category: 'Management & HR' },
+  { 
+    name: "Professional Certificate in CHRP", 
+    issuer: "UNIKA Atma Jaya", 
+    year: 2022, 
+    category: 'Management & HR',
+    description: "Certified Human Resources Professional (CHRP) program covering end-to-end HR management, from recruitment to strategic planning.",
+    skills: ["Strategic HR", "Labor Law", "Performance Management", "Compensation & Benefits"],
+    credentialId: "CHRP-2022-UAJ"
+  },
+  { 
+    name: "Human Resources Foundations", 
+    issuer: "CIPD & LinkedIn", 
+    year: 2025, 
+    category: 'Management & HR',
+    description: "Foundational knowledge in HR practices, organizational behavior, and employee relations.",
+    skills: ["HR Policy", "Employee Engagement", "Talent Development"],
+    credentialId: "CIPD-LI-2025"
+  },
 
   // --- DATA, AI & CLOUD ---
-  { name: "Supervisor Data Scientist", issuer: "Komdigi Indonesia", year: 2026, category: 'Data & AI' },
-  { name: "Career Essentials in Generative AI", issuer: "Microsoft & LinkedIn", year: 2025, category: 'Data & AI' },
-  { name: "AWS Academy Graduates - Cloud Foundations", issuer: "Amazon Web Services", year: 2023, category: 'Cloud & DevOps' },
-  { name: "Learning Google Cloud Foundations", issuer: "Dicoding", year: 2024, category: 'Cloud & DevOps' },
+  { 
+    name: "Supervisor Data Scientist", 
+    issuer: "Komdigi Indonesia", 
+    year: 2026, 
+    category: 'Data & AI',
+    description: "Advanced certification for supervising data science projects, ensuring data quality, and leading analytical teams.",
+    skills: ["Data Strategy", "Team Leadership", "Advanced Analytics", "Model Governance"],
+    credentialId: "KOMDIGI-DS-2026"
+  },
+  { 
+    name: "Career Essentials in Generative AI", 
+    issuer: "Microsoft & LinkedIn", 
+    year: 2025, 
+    category: 'Data & AI',
+    description: "Comprehensive guide to generative AI technologies, prompt engineering, and ethical AI implementation.",
+    skills: ["Prompt Engineering", "LLMs", "AI Ethics", "Copilot"],
+    credentialId: "MS-LI-GAI-2025"
+  },
+  { 
+    name: "AWS Academy Graduates - Cloud Foundations", 
+    issuer: "Amazon Web Services", 
+    year: 2023, 
+    category: 'Cloud & DevOps',
+    description: "Fundamental understanding of AWS Cloud services, security, architecture, and pricing.",
+    skills: ["AWS S3", "EC2", "Cloud Security", "IAM"],
+    credentialId: "AWS-GRAD-2023"
+  },
+  { 
+    name: "Learning Google Cloud Foundations", 
+    issuer: "Dicoding", 
+    year: 2024, 
+    category: 'Cloud & DevOps',
+    description: "Introduction to Google Cloud Platform (GCP) services, including compute, storage, and networking.",
+    skills: ["GCP", "Compute Engine", "Cloud Storage", "BigQuery"],
+    credentialId: "DICODING-GCP-2024"
+  },
 
   // --- INFRASTRUCTURE & SECURITY ---
-  { name: "CISCO DevNet Associate", issuer: "CISCO", year: 2022, category: 'Security & IoT' },
-  { name: "Microsoft Security Essentials Professional Certificate", issuer: "Microsoft & LinkedIn", year: 2025, category: 'Security & IoT' },
-  { name: "Learning DevOps Foundations", issuer: "Dicoding", year: 2024, category: 'Cloud & DevOps' },
-  { name: "Learning SOLID Principles in Programming", issuer: "Dicoding", year: 2023, category: 'Data & AI' }
+  { 
+    name: "CISCO DevNet Associate", 
+    issuer: "CISCO", 
+    year: 2022, 
+    category: 'Security & IoT',
+    description: "Certification for software developers and network engineers to develop and maintain applications on Cisco platforms.",
+    skills: ["Network Automation", "APIs", "Cisco Platforms", "Security"],
+    credentialId: "DEVASC-2022"
+  },
+  { 
+    name: "Microsoft Security Essentials Professional Certificate", 
+    issuer: "Microsoft & LinkedIn", 
+    year: 2025, 
+    category: 'Security & IoT',
+    description: "Professional certificate covering the essentials of cybersecurity, threat protection, and identity management.",
+    skills: ["Cybersecurity", "Threat Protection", "Azure AD", "Compliance"],
+    credentialId: "MS-SEC-2025"
+  },
+  { 
+    name: "Learning DevOps Foundations", 
+    issuer: "Dicoding", 
+    year: 2024, 
+    category: 'Cloud & DevOps',
+    description: "Foundational principles of DevOps, including CI/CD, automation, and collaborative culture.",
+    skills: ["CI/CD", "Docker", "Git", "Automation"],
+    credentialId: "DICODING-DEVOPS-2024"
+  },
+  { 
+    name: "Learning SOLID Principles in Programming", 
+    issuer: "Dicoding", 
+    year: 2023, 
+    category: 'Data & AI',
+    description: "Deep dive into SOLID principles to write clean, maintainable, and scalable code.",
+    skills: ["Clean Code", "OOP", "Software Design", "Refactoring"],
+    credentialId: "DICODING-SOLID-2023"
+  }
 ];
 
 export const SERVICES = [
